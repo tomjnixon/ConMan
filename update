@@ -3,6 +3,7 @@
 cd $(dirname $0)
 
 vars_file=$(mktemp)
+script_file=$(mktemp)
 out_file=$(mktemp)
 
 function update_git_repo() {
@@ -18,7 +19,13 @@ function update_git_repo() {
 
 find configs -name '*.m4' | grep -v 'inc\.m4$' | while read file; do
 	echo -n > $vars_file
-	m4 -DVARS_FILE=$vars_file -Iconfigs header.m4 $file footer.m4 > $out_file || continue
+	echo -n > $script_file
+	m4 \
+		-DVARS_FILE=$vars_file \
+		-DSCRIPT_FILE=$script_file \
+		-Iconfigs \
+		header.m4 $file footer.m4 > $out_file || continue
+	
 	source $vars_file || continue
 	eval full_file_name=$file_name || continue
 	backup_file_name=backup_configs$full_file_name
@@ -38,6 +45,8 @@ find configs -name '*.m4' | grep -v 'inc\.m4$' | while read file; do
 	mkdir -p $(dirname $backup_file_name) $(dirname $full_file_name)
 	cp $out_file $full_file_name
 	cp $out_file $backup_file_name
+	
+	source $script_file || continue
 done
 
-rm $vars_file $out_file
+rm $vars_file $out_file $script_file
