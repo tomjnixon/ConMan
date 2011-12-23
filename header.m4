@@ -20,4 +20,6 @@ define(ELSE_COMPUTER, `divert(ifelse(divnum, -1, OLD_OUTPUT, -1))dnl')
 define(CONFIG_FILE,
 	`define(CONFIG_NAME, $1)define(FILE_NAME, $2)define(ENABLED, eval(ifelse($3,,1,$3)))dnl')
 
+define(GIT_REPO, `syscmd(echo "update_git_repo $1 $2" >> VARS_FILE)')
+
 divert(0)dnl

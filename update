@@ -5,6 +5,17 @@ cd $(dirname $0)
 vars_file=$(mktemp)
 out_file=$(mktemp)
 
+function update_git_repo() {
+	path=$1
+	remote=$2
+	mkdir -p $path
+	(
+		cd $path
+		git init -q
+		git pull $remote
+	)
+}
+
 find configs -name '*.m4' | grep -v 'inc\.m4$' | while read file; do
 	echo -n > $vars_file
 	m4 -DVARS_FILE=$vars_file -Iconfigs header.m4 $file footer.m4 > $out_file || continue
