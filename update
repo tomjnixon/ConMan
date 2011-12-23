@@ -17,9 +17,10 @@ function update_git_repo() {
 	)
 }
 
+echo -n > $script_file
+
 find configs -name '*.m4' | grep -v 'inc\.m4$' | while read file; do
 	echo -n > $vars_file
-	echo -n > $script_file
 	m4 \
 		-DVARS_FILE=$vars_file \
 		-DSCRIPT_FILE=$script_file \
@@ -45,8 +46,8 @@ find configs -name '*.m4' | grep -v 'inc\.m4$' | while read file; do
 	mkdir -p $(dirname $backup_file_name) $(dirname $full_file_name)
 	cp $out_file $full_file_name
 	cp $out_file $backup_file_name
-	
-	source $script_file || continue
 done
+
+source $script_file || continue
 
 rm $vars_file $out_file $script_file
