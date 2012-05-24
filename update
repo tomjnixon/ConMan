@@ -35,6 +35,39 @@ function install_file() {
 	cp $src $backup_path
 }
 
+# Stores a map from argument -> action, where action is executed with eval.
+typeset -A arguments
+typeset -A arguments_help
+
+function add_argument() {
+	arguments[$1]=$2
+	arguments_help[$1]=$3
+}
+
+function print_help() {
+	echo "Usage: $0 [OPTION]"
+	echo
+	for option in "${!arguments_help[@]}"; do
+		printf "  %-10s  %s\n" $option  "${arguments_help[$option]}"
+	done
+	echo
+}
+
+add_argument -h "print_help; exit 1" "Display this message."
+
+# Source all scripts in the scripts directory.
+for script in scripts/* ; do
+	[ -x "$script" ] && source $script
+done
+
+# Parse all command line args. In the context of the action, $1 is the next
+# argument, and should be shifted if used.
+while (($#)); do 
+	arg=$1
+	shift
+	eval "${arguments[$arg]}"
+done
+
 # Generate the config file with id $1, name $2, and install it in $3.
 function config_file() {
 	id=$1
@@ -50,19 +83,6 @@ function config_file() {
 	# ...and install it.
 	install_file $out_file $path
 }
-
-# Make sure the git repo in $1 is up to date with $2
-function update_git_repo() {
-	path=$1
-	remote=$2
-	mkdir -p $path
-	(
-		cd $path
-		git init -q
-		git pull $remote
-	)
-}
-
 
 # Process all m4 files that aren't '*.inc.m4'
 find configs -name '*.m4' '!' -name '*.inc.m4' | while read config_file; do
