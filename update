@@ -35,38 +35,13 @@ function install_file() {
 	cp $src $backup_path
 }
 
-# Stores a map from argument -> action, where action is executed with eval.
-typeset -A arguments
-typeset -A arguments_help
-
-function add_argument() {
-	arguments[$1]=$2
-	arguments_help[$1]=$3
-}
-
-function print_help() {
-	echo "Usage: $0 [OPTION]"
-	echo
-	for option in "${!arguments_help[@]}"; do
-		printf "  %-10s  %s\n" $option  "${arguments_help[$option]}"
-	done
-	echo
-}
-
-add_argument -h "print_help; exit 1" "Display this message."
-
 # Source all scripts in the scripts directory.
 for script in scripts/* ; do
 	[ -x "$script" ] && source $script
 done
 
-# Parse all command line args. In the context of the action, $1 is the next
-# argument, and should be shifted if used.
-while (($#)); do 
-	arg=$1
-	shift
-	eval "${arguments[$arg]}"
-done
+# Save the command line args so that they can be accessed within functions.
+script_args=("$@")
 
 # Generate the config file with id $1, name $2, and install it in $3.
 function config_file() {
@@ -79,6 +54,7 @@ function config_file() {
 		-DSCRIPT_FILE=/dev/null \
 		-DOUTPUT_ID=$id \
 		-Iconfigs \
+		"${script_args[@]}"\
 		header.m4 $config_file > $out_file || continue
 	# ...and install it.
 	install_file $out_file $path
@@ -90,6 +66,7 @@ find configs -name '*.m4' '!' -name '*.inc.m4' | while read config_file; do
 	m4 \
 		-DSCRIPT_FILE=$script_file \
 		-Iconfigs \
+		"${script_args[@]}"\
 		header.m4 $config_file > /dev/null || continue
 	source $script_file || continue
 done

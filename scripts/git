@@ -1,11 +1,7 @@
 #!/bin/bash
 
-enable_git=1
-
 # Make sure the git repo in $1 is up to date with $2
 function update_git_repo() {
-	(($enable_git)) || return
-	
 	path=$1
 	remote=$2
 	mkdir -p $path
@@ -15,5 +11,3 @@ function update_git_repo() {
 		git pull $remote
 	)
 }
-
-add_argument -g "enable_git=0" "Disable updating of git repositories."
