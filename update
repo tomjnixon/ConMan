@@ -59,7 +59,7 @@ function config_file() {
 		-DSCRIPT_FILE=/dev/null \
 		-DOUTPUT_ID=$id \
 		-Iconfigs \
-		"${script_args[@]}"\
+		"${script_args[@]}" \
 		header.m4 "${m4_plugins[@]}" $config_file > $out_file || continue
 	# ...and install it.
 	install_file $out_file $path
@@ -71,7 +71,7 @@ find configs -name '*.m4' '!' -name '*.inc.m4' | while read config_file; do
 	m4 \
 		-DSCRIPT_FILE=$script_file \
 		-Iconfigs \
-		"${script_args[@]}"\
+		"${script_args[@]}" \
 		header.m4 "${m4_plugins[@]}" $config_file > /dev/null || continue
 	source $script_file || continue
 done
