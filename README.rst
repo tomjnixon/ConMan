@@ -121,3 +121,16 @@ should be resolved over time but for now...
 4. Though the git support presently is a bit random and hard-coded at present, a
    plugin system is (possibly) coming so expect this sort of capability to get
    cleaned up and extended.
+
+About
+-----
+
+MIT licensed; see ``LICENSE``.
+
+Original implementation by `Tom Nixon`_.
+
+Documentation by `Jonathan Heathcote`_.
+
+
+.. _Jonathan Heathcote: https://github.com/mossblaser
+.. _Tom Nixon: https://github.com/tomjnixon
