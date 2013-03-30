@@ -117,10 +117,6 @@ should be resolved over time but for now...
 
 3. Be very careful using m4's ``divert`` command in your m4 scripts... Hopefully
    this will be cleaned up in the future...
-  
-4. Though the git support presently is a bit random and hard-coded at present, a
-   plugin system is (possibly) coming so expect this sort of capability to get
-   cleaned up and extended.
 
 About
 -----

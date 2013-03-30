@@ -2,6 +2,8 @@
 
 cd $(dirname $0)
 
+shopt -s globstar
+
 script_file=$(mktemp)
 out_file=$(mktemp)
 
@@ -36,9 +38,12 @@ function install_file() {
 }
 
 # Source all scripts in the scripts directory.
-for script in scripts/* ; do
-	[ -x "$script" ] && source $script
+for script in plugins/**/*.sh; do
+	source "$script"
 done
+
+# Build a list of plugin m4 files to be included.
+m4_plugins=(plugins/**/*.m4)
 
 # Save the command line args so that they can be accessed within functions.
 script_args=("$@")
@@ -55,7 +60,7 @@ function config_file() {
 		-DOUTPUT_ID=$id \
 		-Iconfigs \
 		"${script_args[@]}"\
-		header.m4 $config_file > $out_file || continue
+		header.m4 "${m4_plugins[@]}" $config_file > $out_file || continue
 	# ...and install it.
 	install_file $out_file $path
 }
@@ -67,7 +72,7 @@ find configs -name '*.m4' '!' -name '*.inc.m4' | while read config_file; do
 		-DSCRIPT_FILE=$script_file \
 		-Iconfigs \
 		"${script_args[@]}"\
-		header.m4 $config_file > /dev/null || continue
+		header.m4 "${m4_plugins[@]}" $config_file > /dev/null || continue
 	source $script_file || continue
 done
 

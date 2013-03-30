@@ -44,9 +44,3 @@ define(CONFIG_FILE,
 	`ADD_TO_SCRIPT(config_file NEXT_ID $1 $2)')dnl
 ifelse(NEXT_ID, OUTPUT_ID, `divert(0)', `divert(-1)')dnl
 INC_NEXT_ID()dnl')
-
-dnl Clone (and update) a git repo.
-dnl Arguments:
-dnl   - The path to clone to.
-dnl   - The repository url.
-define(GIT_REPO, `ifdef(`DISABLE_GIT', `', `ADD_TO_SCRIPT(update_git_repo $1 $2)dnl')')
